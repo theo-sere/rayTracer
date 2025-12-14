@@ -1,0 +1,57 @@
+{
+  "viewport_size": {
+    "width": 1,
+    "height": 1
+  },
+  "pixel_size": {
+    "width": 500,
+    "height": 500
+  },
+  "projection_plane_d": 1,
+  "background_color": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+  "spheres": {
+    "s1": {
+      "center": {
+        "x": 0,
+        "y": -1,
+        "z": 3
+      },
+      "radius": 1,
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 0
+      }
+    },
+    "s2": {
+      "center": {
+        "x": 2,
+        "y": 0,
+        "z": 4
+      },
+      "radius": 1,
+      "color": {
+        "r": 0,
+        "g": 0,
+        "b": 255
+      }
+    },
+    "s3": {
+      "center": {
+        "x": -2,
+        "y": 0,
+        "z": 4
+      },
+      "radius": 1,
+      "color": {
+        "r": 0,
+        "g": 255,
+        "b": 0
+      }
+    }
+  }
+}
