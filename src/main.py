@@ -4,6 +4,7 @@ import functions as funcs
 width = JsonReader.get('pixel_size.width')
 height = JsonReader.get('pixel_size.height')
 spheres = JsonReader.get('spheres')
+camPos = JsonReader.get('camera_position')
 
 with open("image.ppm", "w") as f:
     f.write("P3\n")
@@ -14,8 +15,8 @@ with open("image.ppm", "w") as f:
         for _x in range(width):
             x = _x - width/2
             y = _y - height/2
-            dir = funcs.CanvasToViewport(x, y)
-            color = funcs.TraceRay((0, 0, 0), dir, 1, 9999, spheres)
+            dir = funcs.CanvasToViewport(x, -y)
+            color = funcs.TraceRay((camPos["x"], camPos["y"], camPos["z"]), dir, 1, 9999, spheres)
             f.write(f"{color["r"]} {color["g"]} {color["b"]} ")
         f.write("\n")
 
