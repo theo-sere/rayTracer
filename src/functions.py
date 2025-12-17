@@ -11,12 +11,13 @@ def CanvasToViewport(x, y):
     Ch = JsonReader.get('pixel_size.height')
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
+# TODO: Use Sphere Class
 
 def TraceRay(O, D, t_min, t_max, spheres_objects):
     closest_t = float('inf')
     closest_sphere = None
     for sphere in spheres_objects:
-        t1, t2 = IntersectRaySphere(O, D, sphere)
+        t1, t2 = IntersectRaySphere(O, D, spheres_objects[sphere])
         if t_min < t1 < t_max and t1 < closest_t:
             closest_t = t1
             closest_sphere = sphere
@@ -25,12 +26,13 @@ def TraceRay(O, D, t_min, t_max, spheres_objects):
             closest_sphere = sphere
     if closest_sphere == None:
         bg = JsonReader.get('background_color')
-        return (bg['r'], bg['g'], bg['b'])
-    return closest_sphere.color
+        return {"r": bg['r'], "g":bg['g'], "b":bg['b']}
+    return spheres_objects[closest_sphere]["color"]
 
 def IntersectRaySphere(O, D, sphere):
-    r = sphere.radius
-    CO = Vector3((O.x - sphere.x),(O.y - sphere.y),(O.z - sphere.z))
+    r = sphere['radius']
+    # TODO: switch from tuple/dict to object for lisibility
+    CO = Vector3((O[0] - sphere["center"]["x"]),(O[1] - sphere["center"]["y"]),(O[2] - sphere["center"]["z"]))
 
     a = elementaryAlgebra.dot(D, D)
     b = 2*elementaryAlgebra.dot(CO, D)
