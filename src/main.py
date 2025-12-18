@@ -1,6 +1,6 @@
 from tool.instancieur import JsonReader
 import functions as funcs
-
+ 
 width = JsonReader.get('pixel_size.width')
 height = JsonReader.get('pixel_size.height')
 spheres = JsonReader.get('spheres')
