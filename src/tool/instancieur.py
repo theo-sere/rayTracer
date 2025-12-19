@@ -25,4 +25,4 @@ class Sphere:
         self.y = sphere["center"]["y"]
         self.z = sphere["center"]["z"]
         self.radius = sphere["radius"]
-        self.color = (sphere["color"]["r"], sphere["color"]["g"], sphere["color"]["b"])
+        self.color = {"r": sphere["color"]["r"], "g": sphere["color"]["g"], "b": sphere["color"]["b"]}
