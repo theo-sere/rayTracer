@@ -1,6 +1,6 @@
 from math import sqrt
 from pyray import Vector3
-from tool.instancieur import JsonReader, Sphere
+from tool.instancieur import Color, JsonReader, Sphere
 from tool.elementaryAlgebra import elementaryAlgebra
 
 spheres = []
@@ -29,7 +29,7 @@ def TraceRay(O, D, t_min, t_max, spheres_objects):
             closest_sphere = s
     if closest_sphere == None:
         bg = JsonReader.get('background_color')
-        return {"r": bg['r'], "g": bg['g'], "b": bg['b']}
+        return Color(bg['r'], bg['g'], bg['b'])
     return closest_sphere.color
 
 def IntersectRaySphere(O, D, sphere):

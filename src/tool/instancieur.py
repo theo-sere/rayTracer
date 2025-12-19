@@ -1,6 +1,12 @@
 import json
 import os
 
+class Color:
+    def __init__(self, r, g, b):
+        self.r = r
+        self.g = g
+        self.b = b
+
 class JsonReader:
     _data = None
 
@@ -25,4 +31,4 @@ class Sphere:
         self.y = sphere["center"]["y"]
         self.z = sphere["center"]["z"]
         self.radius = sphere["radius"]
-        self.color = {"r": sphere["color"]["r"], "g": sphere["color"]["g"], "b": sphere["color"]["b"]}
+        self.color = Color(sphere["color"]["r"], sphere["color"]["g"], sphere["color"]["b"])
