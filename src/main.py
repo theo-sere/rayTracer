@@ -7,7 +7,7 @@ spheres = JsonReader.get('spheres')
 lights = JsonReader.get('lights')
 camPos = JsonReader.get('camera_position')
 
-with open("image.ppm", "w") as f:
+with open("../image.ppm", "w") as f:
     f.write("P3\n")
     f.write(f"{int(width)} {int(height)}\n")
     f.write("255\n")
