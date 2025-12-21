@@ -1,10 +1,10 @@
 from math import sqrt
 from pyray import Vector3
-from tool.instancieur import Color, JsonReader, Sphere
+from tool.instancieur import Color, JsonReader, Sphere, Light
 from tool.elementaryAlgebra import elementaryAlgebra
 
 spheres = []
-
+lights = []
 def CanvasToViewport(x, y):
     Vw = JsonReader.get('viewport_size.width')
     Vh = JsonReader.get('viewport_size.height')
@@ -13,12 +13,15 @@ def CanvasToViewport(x, y):
     Ch = JsonReader.get('pixel_size.height')
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
-def TraceRay(O, D, t_min, t_max, spheres_objects):
+def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
     closest_t = float('inf')
     closest_sphere = None
     if not spheres:
         for _, i in spheres_objects:
             spheres.append(Sphere(i))
+    if not lights:
+        for _, i in lights_objects:
+            lights.append(Light(i))
     for s in spheres:
         t1, t2 = IntersectRaySphere(O, D, s)
         if t_min < t1 < t_max and t1 < closest_t:
@@ -30,7 +33,16 @@ def TraceRay(O, D, t_min, t_max, spheres_objects):
     if closest_sphere == None:
         bg = JsonReader.get('background_color')
         return Color(bg['r'], bg['g'], bg['b'])
-    return closest_sphere.color
+    P = Vector3(O[0] + closest_t * D.x, O[1] + closest_t * D.y, O[2] + closest_t * D.z)
+    N = Vector3(P.x - closest_sphere.x, P.y - closest_sphere.y, P.z - closest_sphere.z)
+    N.x = N.x / elementaryAlgebra.length(N)
+    N.y = N.y / elementaryAlgebra.length(N)
+    N.z = N.z / elementaryAlgebra.length(N)
+    lighting_intensity = ComputeLighting(P, N, Vector3(-D.x, -D.y, -D.z), closest_sphere.specular)
+    r = min(255, int(closest_sphere.color.r * lighting_intensity))
+    g = min(255, int(closest_sphere.color.g * lighting_intensity))
+    b = min(255, int(closest_sphere.color.b * lighting_intensity))
+    return Color(r, g, b)
 
 def IntersectRaySphere(O, D, sphere):
     r = sphere.radius
@@ -48,3 +60,27 @@ def IntersectRaySphere(O, D, sphere):
     t1 = (-b + sqrt(discriminant)) / (2*a)
     t2 = (-b - sqrt(discriminant)) / (2*a)
     return t1, t2
+
+def ComputeLighting(P, N, V, s):
+    i = 0.0
+    for light in lights:
+        if light.type == "ambient":
+           i += light.intensity
+        else :
+            if light.type == "point":
+               L = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
+            else:
+               L = Vector3(light.x, light.y, light.z)
+
+            #Difuse
+            n_dot_l = elementaryAlgebra.dot(N, L)
+            if n_dot_l > 0 :
+                i += light.intensity * n_dot_l/(elementaryAlgebra.length(N) * elementaryAlgebra.length(L))
+
+            #Specular
+            if s != -1 :
+                R = Vector3(2 * N.x * elementaryAlgebra.dot(N, L) - L.x, 2 * N.y * elementaryAlgebra.dot(N, L) - L.y, 2 * N.z * elementaryAlgebra.dot(N, L) - L.z)
+                r_dot_v = elementaryAlgebra.dot(R, V)
+                if r_dot_v > 0 :
+                    i += light.intensity * pow(r_dot_v / (elementaryAlgebra.length(R) * elementaryAlgebra.length(V)), s)
+    return i
