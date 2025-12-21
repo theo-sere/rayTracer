@@ -32,6 +32,7 @@ class Sphere:
         self.z = sphere["center"]["z"]
         self.radius = sphere["radius"]
         self.color = Color(sphere["color"]["r"], sphere["color"]["g"], sphere["color"]["b"])
+        self.specular = sphere["specular"]
 
 class Light:
     def __init__(self, number):

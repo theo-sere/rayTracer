@@ -38,10 +38,10 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
     N.x = N.x / elementaryAlgebra.length(N)
     N.y = N.y / elementaryAlgebra.length(N)
     N.z = N.z / elementaryAlgebra.length(N)
-    lighting_intensity = ComputeLighting(P, N)
-    r = int(closest_sphere.color.r * lighting_intensity)
-    g = int(closest_sphere.color.g * lighting_intensity)
-    b = int(closest_sphere.color.b * lighting_intensity)
+    lighting_intensity = ComputeLighting(P, N, Vector3(-D.x, -D.y, -D.z), closest_sphere.specular)
+    r = min(255, int(closest_sphere.color.r * lighting_intensity))
+    g = min(255, int(closest_sphere.color.g * lighting_intensity))
+    b = min(255, int(closest_sphere.color.b * lighting_intensity))
     return Color(r, g, b)
 
 def IntersectRaySphere(O, D, sphere):
@@ -61,7 +61,7 @@ def IntersectRaySphere(O, D, sphere):
     t2 = (-b - sqrt(discriminant)) / (2*a)
     return t1, t2
 
-def ComputeLighting(P, N):
+def ComputeLighting(P, N, V, s):
     i = 0.0
     for light in lights:
         if light.type == "ambient":
@@ -72,7 +72,15 @@ def ComputeLighting(P, N):
             else:
                L = Vector3(light.x, light.y, light.z)
 
+            #Difuse
             n_dot_l = elementaryAlgebra.dot(N, L)
             if n_dot_l > 0 :
                 i += light.intensity * n_dot_l/(elementaryAlgebra.length(N) * elementaryAlgebra.length(L))
+
+            #Specular
+            if s != -1 :
+                R = Vector3(2 * N.x * elementaryAlgebra.dot(N, L) - L.x, 2 * N.y * elementaryAlgebra.dot(N, L) - L.y, 2 * N.z * elementaryAlgebra.dot(N, L) - L.z)
+                r_dot_v = elementaryAlgebra.dot(R, V)
+                if r_dot_v > 0 :
+                    i += light.intensity * pow(r_dot_v / (elementaryAlgebra.length(R) * elementaryAlgebra.length(V)), s)
     return i
