@@ -18,7 +18,7 @@ Un moteur de rendu par lancer de rayons (Ray Tracer) simple écrit en Python. Ce
 
 1.  Clonez le dépôt :
     ```bash
-    git clone <votre-url-repo>
+    git clone https://github.com/theo-sere/rayTracer
     cd rayTracer
     ```
 
