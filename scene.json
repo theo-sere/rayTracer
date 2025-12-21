@@ -11,8 +11,8 @@
   "projection_plane_d": 1,
   "background_color": {
     "r": 0,
-    "g": 0,
-    "b": 0
+    "g": 150,
+    "b": 150
   },
   "spheres": {
     "s1": {
@@ -52,6 +52,43 @@
         "r": 0,
         "g": 255,
         "b": 0
+      }
+    },
+    "s4": {
+      "center": {
+        "x": 0,
+        "y": -5001,
+        "z": 0
+      },
+      "radius": 5000,
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 0
+      }
+    }
+  },
+  "lights": {
+    "l1": {
+      "type": "ambient",
+      "intensity": 0.2
+    },
+    "l2": {
+      "type": "point",
+      "intensity": 0.6,
+      "position": {
+        "x": 2,
+        "y": 1,
+        "z": 0
+      }
+    },
+    "l3": {
+      "type": "directional",
+      "intensity": 0.2,
+      "direction": {
+        "x": 1,
+        "y": 4,
+        "z": 4
       }
     }
   }

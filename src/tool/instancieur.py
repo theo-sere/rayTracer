@@ -25,4 +25,22 @@ class Sphere:
         self.y = sphere["center"]["y"]
         self.z = sphere["center"]["z"]
         self.radius = sphere["radius"]
+<<<<<<< Updated upstream
         self.color = (sphere["color"]["r"], sphere["color"]["g"], sphere["color"]["b"])
+=======
+        self.color = Color(sphere["color"]["r"], sphere["color"]["g"], sphere["color"]["b"])
+
+class Light:
+    def __init__(self, number):
+        light = JsonReader.get('lights.l'+str(number))
+        self.type = light["type"]
+        if self.type == "directional":
+            self.x = light["direction"]["x"]
+            self.y = light["direction"]["y"]
+            self.z = light["direction"]["z"]
+        if self.type == "point":
+            self.x = light["position"]["x"]
+            self.y = light["position"]["y"]
+            self.z = light["position"]["z"]
+        self.intensity = light["intensity"]
+>>>>>>> Stashed changes
