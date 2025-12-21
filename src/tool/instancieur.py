@@ -26,8 +26,11 @@ class Sphere:
         self.z = sphere["center"]["z"]
         self.radius = sphere["radius"]
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         self.color = (sphere["color"]["r"], sphere["color"]["g"], sphere["color"]["b"])
 =======
+=======
+>>>>>>> Stashed changes
         self.color = Color(sphere["color"]["r"], sphere["color"]["g"], sphere["color"]["b"])
 
 class Light:
@@ -42,5 +45,9 @@ class Light:
             self.x = light["position"]["x"]
             self.y = light["position"]["y"]
             self.z = light["position"]["z"]
+<<<<<<< Updated upstream
+        self.intensity = light["intensity"]
+>>>>>>> Stashed changes
+=======
         self.intensity = light["intensity"]
 >>>>>>> Stashed changes

@@ -1,10 +1,13 @@
 from math import sqrt
 from pyray import Vector3
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 from tool.instancieur import JsonReader
 from tool.elementaryAlgebra import elementaryAlgebra
 
 =======
+=======
+>>>>>>> Stashed changes
 from tool.instancieur import Color, JsonReader, Sphere, Light
 from tool.elementaryAlgebra import elementaryAlgebra
 
@@ -21,9 +24,13 @@ def CanvasToViewport(x, y):
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 # TODO: Use Sphere Class
 
 def TraceRay(O, D, t_min, t_max, spheres_objects):
+=======
+def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
+>>>>>>> Stashed changes
     closest_t = float('inf')
     closest_sphere = None
     for sphere in spheres_objects:
@@ -64,6 +71,9 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
     g = int(closest_sphere.color.g * lighting_intensity)
     b = int(closest_sphere.color.b * lighting_intensity)
     return Color(r, g, b)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 def IntersectRaySphere(O, D, sphere):

@@ -18,9 +18,12 @@ with open("../image.ppm", "w") as f:
             y = _y - height/2
             dir = funcs.CanvasToViewport(x, -y)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             color = funcs.TraceRay((camPos["x"], camPos["y"], camPos["z"]), dir, 1, 9999, spheres)
             f.write(f"{color["r"]} {color["g"]} {color["b"]} ")
 =======
+=======
+>>>>>>> Stashed changes
             color = funcs.TraceRay((camPos["x"], camPos["y"], camPos["z"]), dir, 1, 9999, spheres, lights)
             f.write(f"{color.r} {color.g} {color.b} ")
 >>>>>>> Stashed changes
