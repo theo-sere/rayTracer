@@ -33,7 +33,7 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
     if closest_sphere == None:
         bg = JsonReader.get('background_color')
         return Color(bg['r'], bg['g'], bg['b'])
-    P = Vector3(O[0] + closest_t * D.x, O[1] + closest_t * D.y, O[2] + closest_t * D.z)
+    P = Vector3(O.x + closest_t * D.x, O.y + closest_t * D.y, O.z + closest_t * D.z)
     N = Vector3(P.x - closest_sphere.x, P.y - closest_sphere.y, P.z - closest_sphere.z)
     N.x = N.x / elementaryAlgebra.length(N)
     N.y = N.y / elementaryAlgebra.length(N)
@@ -46,8 +46,7 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
 
 def IntersectRaySphere(O, D, sphere):
     r = sphere.radius
-    # TODO: switch from tuple/dict to object for lisibility
-    CO = Vector3((O[0] - sphere.x),(O[1] - sphere.y),(O[2] - sphere.z))
+    CO = Vector3((O.x - sphere.x),(O.y - sphere.y),(O.z - sphere.z))
 
     a = elementaryAlgebra.dot(D, D)
     b = 2*elementaryAlgebra.dot(CO, D)
