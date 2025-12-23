@@ -13,15 +13,9 @@ def CanvasToViewport(x, y):
     Ch = JsonReader.get('pixel_size.height')
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
-def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
+def GetClosestIntersection(O, D, t_min, t_max) :
     closest_t = float('inf')
     closest_sphere = None
-    if not spheres:
-        for _, i in spheres_objects:
-            spheres.append(Sphere(i))
-    if not lights:
-        for _, i in lights_objects:
-            lights.append(Light(i))
     for s in spheres:
         t1, t2 = IntersectRaySphere(O, D, s)
         if t_min < t1 < t_max and t1 < closest_t:
@@ -30,6 +24,16 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
         if t_min < t2 < t_max and t2 < closest_t:
             closest_t = t2
             closest_sphere = s
+    return closest_sphere, closest_t
+
+def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
+    if not spheres:
+        for _, i in spheres_objects:
+            spheres.append(Sphere(i))
+    if not lights:
+        for _, i in lights_objects:
+            lights.append(Light(i))
+    closest_sphere, closest_t = GetClosestIntersection(O, D, t_min, t_max)
     if closest_sphere == None:
         bg = JsonReader.get('background_color')
         return Color(bg['r'], bg['g'], bg['b'])
@@ -68,15 +72,22 @@ def ComputeLighting(P, N, V, s):
         else :
             if light.type == "point":
                L = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
+               t_max = 1
             else:
                L = Vector3(light.x, light.y, light.z)
+               t_max = float("inf")
 
-            #Difuse
+            # Shadow
+            shadow_sphere, _ = GetClosestIntersection(P, L, 0.001, t_max)
+            if shadow_sphere :
+                continue
+
+            # Diffuse
             n_dot_l = elementaryAlgebra.dot(N, L)
             if n_dot_l > 0 :
                 i += light.intensity * n_dot_l/(elementaryAlgebra.length(N) * elementaryAlgebra.length(L))
 
-            #Specular
+            # Specular
             if s != -1 :
                 R = Vector3(2 * N.x * elementaryAlgebra.dot(N, L) - L.x, 2 * N.y * elementaryAlgebra.dot(N, L) - L.y, 2 * N.z * elementaryAlgebra.dot(N, L) - L.z)
                 r_dot_v = elementaryAlgebra.dot(R, V)
