@@ -72,7 +72,6 @@ def ComputeLighting(P, N, V, s):
            i += light.intensity
         else:
             if light.type == "point":
-               L = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
                 L_vec = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
                 t_max = elementaryAlgebra.length(L_vec)
                 # ReNormalize
