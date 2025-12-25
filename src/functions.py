@@ -5,6 +5,7 @@ from tool.elementaryAlgebra import elementaryAlgebra
 
 spheres = []
 lights = []
+
 def CanvasToViewport(x, y):
     Vw = JsonReader.get('viewport_size.width')
     Vh = JsonReader.get('viewport_size.height')
@@ -13,7 +14,7 @@ def CanvasToViewport(x, y):
     Ch = JsonReader.get('pixel_size.height')
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
-def GetClosestIntersection(O, D, t_min, t_max) :
+def GetClosestIntersection(O, D, t_min, t_max):
     closest_t = float('inf')
     closest_sphere = None
     for s in spheres:
@@ -39,10 +40,13 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
         return Color(bg['r'], bg['g'], bg['b'])
     P = Vector3(O.x + closest_t * D.x, O.y + closest_t * D.y, O.z + closest_t * D.z)
     N = Vector3(P.x - closest_sphere.x, P.y - closest_sphere.y, P.z - closest_sphere.z)
-    N.x = N.x / elementaryAlgebra.length(N)
-    N.y = N.y / elementaryAlgebra.length(N)
-    N.z = N.z / elementaryAlgebra.length(N)
-    lighting_intensity = ComputeLighting(P, N, Vector3(-D.x, -D.y, -D.z), closest_sphere.specular)
+    N_len = elementaryAlgebra.length(N)
+    N.x /= N_len
+    N.y /= N_len
+    N.z /= N_len
+    V_len = elementaryAlgebra.length(D)
+    V = Vector3(-D.x/V_len, -D.y/V_len, -D.z/V_len)
+    lighting_intensity = ComputeLighting(P, N, V, getattr(closest_sphere, 'specular', -1))
     r = min(255, int(closest_sphere.color.r * lighting_intensity))
     g = min(255, int(closest_sphere.color.g * lighting_intensity))
     b = min(255, int(closest_sphere.color.b * lighting_intensity))
@@ -50,16 +54,13 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
 
 def IntersectRaySphere(O, D, sphere):
     r = sphere.radius
-    CO = Vector3((O.x - sphere.x),(O.y - sphere.y),(O.z - sphere.z))
-
+    CO = Vector3(O.x - sphere.x, O.y - sphere.y, O.z - sphere.z)
     a = elementaryAlgebra.dot(D, D)
-    b = 2*elementaryAlgebra.dot(CO, D)
+    b = 2 * elementaryAlgebra.dot(CO, D)
     c = elementaryAlgebra.dot(CO, CO) - r*r
-
     discriminant = b*b - 4*a*c
     if discriminant < 0:
         return float('inf'), float('inf')
-
     t1 = (-b + sqrt(discriminant)) / (2*a)
     t2 = (-b - sqrt(discriminant)) / (2*a)
     return t1, t2
@@ -69,13 +70,18 @@ def ComputeLighting(P, N, V, s):
     for light in lights:
         if light.type == "ambient":
            i += light.intensity
-        else :
+        else:
             if light.type == "point":
                L = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
                t_max = 1
             else:
                L = Vector3(light.x, light.y, light.z)
                t_max = float("inf")
+            
+            L_len = elementaryAlgebra.length(L)
+            L.x /= L_len
+            L.y /= L_len
+            L.z /= L_len
 
             # Shadow
             shadow_sphere, _ = GetClosestIntersection(P, L, 0.001, t_max)
@@ -84,13 +90,19 @@ def ComputeLighting(P, N, V, s):
 
             # Diffuse
             n_dot_l = elementaryAlgebra.dot(N, L)
-            if n_dot_l > 0 :
-                i += light.intensity * n_dot_l/(elementaryAlgebra.length(N) * elementaryAlgebra.length(L))
+            if n_dot_l > 0:
+                i += light.intensity * n_dot_l
 
             # Specular
-            if s != -1 :
-                R = Vector3(2 * N.x * elementaryAlgebra.dot(N, L) - L.x, 2 * N.y * elementaryAlgebra.dot(N, L) - L.y, 2 * N.z * elementaryAlgebra.dot(N, L) - L.z)
+            if s != -1:
+                R = Vector3(2 * N.x * elementaryAlgebra.dot(N, L) - L.x,
+                            2 * N.y * elementaryAlgebra.dot(N, L) - L.y,
+                            2 * N.z * elementaryAlgebra.dot(N, L) - L.z)
+                R_len = elementaryAlgebra.length(R)
+                R.x /= R_len
+                R.y /= R_len
+                R.z /= R_len
                 r_dot_v = elementaryAlgebra.dot(R, V)
-                if r_dot_v > 0 :
-                    i += light.intensity * pow(r_dot_v / (elementaryAlgebra.length(R) * elementaryAlgebra.length(V)), s)
+                if r_dot_v > 0:
+                    i += light.intensity * pow(r_dot_v, s)
     return i
