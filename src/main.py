@@ -1,6 +1,5 @@
-from tool.instancieur import JsonReader
+from tools.instancieur import JsonReader, Vector3
 import functions as funcs
-from pyray import Vector3
 import imageio
 import os
 

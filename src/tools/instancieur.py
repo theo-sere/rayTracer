@@ -1,5 +1,18 @@
 import json
 import os
+import math
+    
+class Vector3:
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def dot(self, b):
+        return ((self.x * b.x) + (self.y * b.y) + (self.z * b.z))
+    
+    def length(self):
+        return math.sqrt(self.dot(self))
 
 class Color:
     def __init__(self, r, g, b):
