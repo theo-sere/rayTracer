@@ -1,7 +1,5 @@
 from math import sqrt
-from pyray import Vector3
-from tool.instancieur import Color, JsonReader, Sphere, Light
-from tool.elementaryAlgebra import elementaryAlgebra
+from tools.instancieur import Vector3, Color, JsonReader, Sphere, Light
 
 spheres = []
 lights = []
@@ -17,9 +15,9 @@ def CanvasToViewport(x, y):
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
 def ReflectRay(R, N) :
-    reflected_ray = Vector3(2 * N.x * elementaryAlgebra.dot(N, R) - R.x,
-                            2 * N.y * elementaryAlgebra.dot(N, R) - R.y,
-                            2 * N.z * elementaryAlgebra.dot(N, R) - R.z)
+    reflected_ray = Vector3(2 * N.x * N.dot(R) - R.x,
+                            2 * N.y * N.dot(R) - R.y,
+                            2 * N.z * N.dot(R) - R.z)
     return reflected_ray
 
 def GetClosestIntersection(O, D, t_min, t_max):
@@ -54,12 +52,12 @@ def TraceRay(O, D, t_min, t_max, recursion_depth, spheres_objects, lights_object
 
     N = Vector3(P.x - closest_sphere.x, P.y - closest_sphere.y, P.z - closest_sphere.z)
 
-    N_len = elementaryAlgebra.length(N)
+    N_len = N.length()
     N.x /= N_len
     N.y /= N_len
     N.z /= N_len
 
-    V_len = elementaryAlgebra.length(D)
+    V_len = D.length()
     V = Vector3(-D.x/V_len, -D.y/V_len, -D.z/V_len)
 
     lighting_intensity = ComputeLighting(P, N, V, getattr(closest_sphere, 'specular', -1))
@@ -72,9 +70,9 @@ def TraceRay(O, D, t_min, t_max, recursion_depth, spheres_objects, lights_object
         return _color
 
     R = ReflectRay(Vector3(-D.x, -D.y, -D.z), N)
-    R.x /= elementaryAlgebra.length(R)
-    R.y /= elementaryAlgebra.length(R)
-    R.z /= elementaryAlgebra.length(R)
+    R.x /= R.length()
+    R.y /= R.length()
+    R.z /= R.length()
     
     reflection_origin = Vector3(P.x + N.x * epsilon, P.y + N.y * epsilon, P.z + N.z * epsilon)
 
@@ -86,9 +84,9 @@ def TraceRay(O, D, t_min, t_max, recursion_depth, spheres_objects, lights_object
 def IntersectRaySphere(O, D, sphere):
     r = sphere.radius
     CO = Vector3(O.x - sphere.x, O.y - sphere.y, O.z - sphere.z)
-    a = elementaryAlgebra.dot(D, D)
-    b = 2 * elementaryAlgebra.dot(CO, D)
-    c = elementaryAlgebra.dot(CO, CO) - r*r
+    a = D.dot(D)
+    b = 2 * CO.dot(D)
+    c = CO.dot(CO) - r*r
     discriminant = b*b - 4*a*c
     if discriminant < 0:
         return float('inf'), float('inf')
@@ -104,13 +102,13 @@ def ComputeLighting(P, N, V, s):
         else:
             if light.type == "point":
                 L = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
-                L_len = elementaryAlgebra.length(L)
+                L_len = L.length()
                 t_max = L_len
             else:
                 L = Vector3(light.x, light.y, light.z)
                 t_max = float("inf")
 
-            L_len = elementaryAlgebra.length(L)
+            L_len = L.length()
             L.x /= L_len
             L.y /= L_len
             L.z /= L_len
@@ -122,18 +120,18 @@ def ComputeLighting(P, N, V, s):
                 continue
 
             # Diffuse
-            n_dot_l = elementaryAlgebra.dot(N, L)
+            n_dot_l = N.dot(L)
             if n_dot_l > 0:
                 i += light.intensity * n_dot_l
 
             # Specular
             if s != -1:
                 R = ReflectRay(L, N)
-                R_len = elementaryAlgebra.length(R)
+                R_len = R.length()
                 R.x /= R_len
                 R.y /= R_len
                 R.z /= R_len
-                r_dot_v = elementaryAlgebra.dot(R, V)
+                r_dot_v = R.dot(V)
                 if r_dot_v > 0:
                     i += light.intensity * pow(r_dot_v, s)
     return i
