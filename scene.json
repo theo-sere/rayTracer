@@ -9,67 +9,35 @@
   },
   "camera_position": { "x": 0, "y": 0, "z": 0 },
   "projection_plane_d": 1,
-  "background_color": {
-    "r": 0,
-    "g": 150,
-    "b": 150
-  },
+  "background_color": { "r": 0, "g": 0, "b": 0 },
   "spheres": {
     "s1": {
-      "center": {
-        "x": 0,
-        "y": -1,
-        "z": 3
-      },
+      "center": { "x": 0, "y": -1, "z": 3 },
       "radius": 1,
-      "color": {
-        "r": 255,
-        "g": 0,
-        "b": 0
-      },
-      "specular" : 500
+      "color": { "r": 255, "g": 0, "b": 0 },
+      "specular": 500,
+      "reflective": 0.2
     },
     "s2": {
-      "center": {
-        "x": 2,
-        "y": 0,
-        "z": 4
-      },
+      "center": { "x": -2, "y": 0, "z": 4 },
       "radius": 1,
-      "color": {
-        "r": 0,
-        "g": 0,
-        "b": 255
-      },
-      "specular" : 500
+      "color": { "r": 0, "g": 255, "b": 0 },
+      "specular": 10,
+      "reflective": 0.4
     },
     "s3": {
-      "center": {
-        "x": -2,
-        "y": 0,
-        "z": 4
-      },
+      "center": { "x": 2, "y": 0, "z": 4 },
       "radius": 1,
-      "color": {
-        "r": 0,
-        "g": 255,
-        "b": 0
-      },
-      "specular" : 10
+      "color": { "r": 0, "g": 0, "b": 255 },
+      "specular": 500,
+      "reflective": 0.3
     },
     "s4": {
-      "center": {
-        "x": 0,
-        "y": -5001,
-        "z": 0
-      },
+      "center": { "x": 0, "y": -5001, "z": 0 },
       "radius": 5000,
-      "color": {
-        "r": 255,
-        "g": 255,
-        "b": 0
-      },
-      "specular" : 1000
+      "color": { "r": 255, "g": 255, "b": 0 },
+      "specular": 1000,
+      "reflective": 0.5
     }
   },
   "lights": {
@@ -80,20 +48,12 @@
     "l2": {
       "type": "point",
       "intensity": 0.6,
-      "position": {
-        "x": 2,
-        "y": 1,
-        "z": 0
-      }
+      "position": { "x": 2, "y": 1, "z": 0 }
     },
     "l3": {
       "type": "directional",
       "intensity": 0.2,
-      "direction": {
-        "x": 1,
-        "y": 4,
-        "z": 4
-      }
+      "direction": { "x": 1, "y": 4, "z": 4 }
     }
   }
 }
