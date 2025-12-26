@@ -16,6 +16,12 @@ def CanvasToViewport(x, y):
     Ch = JsonReader.get('pixel_size.height')
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
+def ReflectRay(R, N) :
+    reflected_ray = Vector3(2 * N.x * elementaryAlgebra.dot(N, R) - R.x,
+                            2 * N.y * elementaryAlgebra.dot(N, R) - R.y,
+                            2 * N.z * elementaryAlgebra.dot(N, R) - R.z)
+    return reflected_ray
+
 def GetClosestIntersection(O, D, t_min, t_max):
     closest_t = float('inf')
     closest_sphere = None
@@ -29,7 +35,8 @@ def GetClosestIntersection(O, D, t_min, t_max):
             closest_sphere = s
     return closest_sphere, closest_t
 
-def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
+def TraceRay(O, D, t_min, t_max, recursion_depth, spheres_objects, lights_objects):
+
     if not spheres:
         for _, i in spheres_objects:
             spheres.append(Sphere(i))
@@ -58,8 +65,23 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
     lighting_intensity = ComputeLighting(P, N, V, getattr(closest_sphere, 'specular', -1))
 
     _color = closest_sphere.color.mul(lighting_intensity).clamp().round()
-    return _color
 
+    ref = closest_sphere.reflective
+
+    if recursion_depth <= 0 or ref <= 0 :
+        return _color
+
+    R = ReflectRay(Vector3(-D.x, -D.y, -D.z), N)
+    R.x /= elementaryAlgebra.length(R)
+    R.y /= elementaryAlgebra.length(R)
+    R.z /= elementaryAlgebra.length(R)
+    
+    reflection_origin = Vector3(P.x + N.x * epsilon, P.y + N.y * epsilon, P.z + N.z * epsilon)
+
+    reflected_color = TraceRay(reflection_origin, R, epsilon, float("infinity"), recursion_depth - 1, spheres_objects, lights_objects)
+
+
+    return _color.mul(1 - ref).add(reflected_color.mul(ref))
 
 def IntersectRaySphere(O, D, sphere):
     r = sphere.radius
@@ -106,9 +128,7 @@ def ComputeLighting(P, N, V, s):
 
             # Specular
             if s != -1:
-                R = Vector3(2 * N.x * elementaryAlgebra.dot(N, L) - L.x,
-                            2 * N.y * elementaryAlgebra.dot(N, L) - L.y,
-                            2 * N.z * elementaryAlgebra.dot(N, L) - L.z)
+                R = ReflectRay(L, N)
                 R_len = elementaryAlgebra.length(R)
                 R.x /= R_len
                 R.y /= R_len
