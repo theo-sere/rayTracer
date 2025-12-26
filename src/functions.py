@@ -39,6 +39,7 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
 
     closest_sphere, closest_t = GetClosestIntersection(O, D, t_min, t_max)
 
+    if not closest_sphere:
         bg = JsonReader.get('background_color')
         return Color(bg['r'], bg['g'], bg['b'])
     
