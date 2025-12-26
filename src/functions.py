@@ -6,6 +6,8 @@ from tool.elementaryAlgebra import elementaryAlgebra
 spheres = []
 lights = []
 
+epsilon = 0.001
+
 def CanvasToViewport(x, y):
     Vw = JsonReader.get('viewport_size.width')
     Vh = JsonReader.get('viewport_size.height')
@@ -34,12 +36,16 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
     if not lights:
         for _, i in lights_objects:
             lights.append(Light(i))
+
     closest_sphere, closest_t = GetClosestIntersection(O, D, t_min, t_max)
-    if closest_sphere == None:
+
         bg = JsonReader.get('background_color')
         return Color(bg['r'], bg['g'], bg['b'])
+    
     P = Vector3(O.x + closest_t * D.x, O.y + closest_t * D.y, O.z + closest_t * D.z)
+
     N = Vector3(P.x - closest_sphere.x, P.y - closest_sphere.y, P.z - closest_sphere.z)
+
     N_len = elementaryAlgebra.length(N)
     N.x /= N_len
     N.y /= N_len
@@ -47,11 +53,10 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
 
     V_len = elementaryAlgebra.length(D)
     V = Vector3(-D.x/V_len, -D.y/V_len, -D.z/V_len)
-    
+
     lighting_intensity = ComputeLighting(P, N, V, getattr(closest_sphere, 'specular', -1))
 
     _color = closest_sphere.color.mul(lighting_intensity).clamp().round()
-
     return _color
 
 
@@ -72,24 +77,24 @@ def ComputeLighting(P, N, V, s):
     i = 0.0
     for light in lights:
         if light.type == "ambient":
-           i += light.intensity
+            i += light.intensity
         else:
             if light.type == "point":
-                L_vec = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
-                t_max = elementaryAlgebra.length(L_vec)
-                # ReNormalize
-                L = Vector3(L_vec.x / t_max, L_vec.y / t_max, L_vec.z / t_max)
+                L = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
+                L_len = elementaryAlgebra.length(L)
+                t_max = L_len
             else:
-               L = Vector3(light.x, light.y, light.z)
-               t_max = float("inf")
-            
+                L = Vector3(light.x, light.y, light.z)
+                t_max = float("inf")
+
             L_len = elementaryAlgebra.length(L)
             L.x /= L_len
             L.y /= L_len
             L.z /= L_len
 
             # Shadow
-            shadow_sphere, _ = GetClosestIntersection(P, L, 0.001, t_max)
+            shadow_origin = Vector3(P.x + N.x * epsilon, P.y + N.y * epsilon, P.z + N.z * epsilon)
+            shadow_sphere, _ = GetClosestIntersection(shadow_origin, L, epsilon, t_max)
             if shadow_sphere :
                 continue
 
