@@ -44,13 +44,16 @@ def TraceRay(O, D, t_min, t_max, spheres_objects, lights_objects):
     N.x /= N_len
     N.y /= N_len
     N.z /= N_len
+
     V_len = elementaryAlgebra.length(D)
     V = Vector3(-D.x/V_len, -D.y/V_len, -D.z/V_len)
+    
     lighting_intensity = ComputeLighting(P, N, V, getattr(closest_sphere, 'specular', -1))
-    r = min(255, int(closest_sphere.color.r * lighting_intensity))
-    g = min(255, int(closest_sphere.color.g * lighting_intensity))
-    b = min(255, int(closest_sphere.color.b * lighting_intensity))
-    return Color(r, g, b)
+
+    _color = closest_sphere.color.mul(lighting_intensity).clamp().round()
+
+    return _color
+
 
 def IntersectRaySphere(O, D, sphere):
     r = sphere.radius
