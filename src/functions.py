@@ -15,9 +15,7 @@ def CanvasToViewport(x, y):
     return Vector3(x*Vw/Cw, y*Vh/Ch, d)
 
 def ReflectRay(R, N) :
-    reflected_ray = Vector3(2 * N.x * N.dot(R) - R.x,
-                            2 * N.y * N.dot(R) - R.y,
-                            2 * N.z * N.dot(R) - R.z)
+    reflected_ray = Vector3(N).mul(2).mul(N.dot(R)).sub(R)
     return reflected_ray
 
 def GetClosestIntersection(O, D, t_min, t_max):
@@ -48,17 +46,14 @@ def TraceRay(O, D, t_min, t_max, recursion_depth, spheres_objects, lights_object
         bg = JsonReader.get('background_color')
         return Color(bg['r'], bg['g'], bg['b'])
     
-    P = Vector3(O.x + closest_t * D.x, O.y + closest_t * D.y, O.z + closest_t * D.z)
+    x, y, z = closest_sphere
+    closest_sphere_vec = Vector3(x, y, z)
+    
+    P = Vector3(O).add(Vector3(D).mul(closest_t))
 
-    N = Vector3(P.x - closest_sphere.x, P.y - closest_sphere.y, P.z - closest_sphere.z)
+    N = Vector3(P).sub(closest_sphere_vec).normalize()
 
-    N_len = N.length()
-    N.x /= N_len
-    N.y /= N_len
-    N.z /= N_len
-
-    V_len = D.length()
-    V = Vector3(-D.x/V_len, -D.y/V_len, -D.z/V_len)
+    V = Vector3(D).mul(-1).normalize()
 
     lighting_intensity = ComputeLighting(P, N, V, getattr(closest_sphere, 'specular', -1))
 
@@ -69,21 +64,19 @@ def TraceRay(O, D, t_min, t_max, recursion_depth, spheres_objects, lights_object
     if recursion_depth <= 0 or ref <= 0 :
         return _color
 
-    R = ReflectRay(Vector3(-D.x, -D.y, -D.z), N)
-    R.x /= R.length()
-    R.y /= R.length()
-    R.z /= R.length()
+    R = ReflectRay(Vector3(D).mul(-1), N).normalize()
     
-    reflection_origin = Vector3(P.x + N.x * epsilon, P.y + N.y * epsilon, P.z + N.z * epsilon)
+    reflection_origin = Vector3(P).add(Vector3(N).mul(epsilon))
 
     reflected_color = TraceRay(reflection_origin, R, epsilon, float("infinity"), recursion_depth - 1, spheres_objects, lights_objects)
-
 
     return _color.mul(1 - ref).add(reflected_color.mul(ref))
 
 def IntersectRaySphere(O, D, sphere):
     r = sphere.radius
-    CO = Vector3(O.x - sphere.x, O.y - sphere.y, O.z - sphere.z)
+    x, y, z = sphere
+    sphere_pos = Vector3(x, y, z)
+    CO = Vector3(O).sub(sphere_pos)
     a = D.dot(D)
     b = 2 * CO.dot(D)
     c = CO.dot(CO) - r*r
@@ -100,21 +93,20 @@ def ComputeLighting(P, N, V, s):
         if light.type == "ambient":
             i += light.intensity
         else:
+            x, y, z = light
+            light_vec = Vector3(x, y, z)
             if light.type == "point":
-                L = Vector3(light.x - P.x, light.y - P.y, light.z - P.z)
+                L = Vector3(light_vec).sub(P)
                 L_len = L.length()
                 t_max = L_len
             else:
-                L = Vector3(light.x, light.y, light.z)
+                L = Vector3(light_vec)
                 t_max = float("inf")
 
-            L_len = L.length()
-            L.x /= L_len
-            L.y /= L_len
-            L.z /= L_len
+            L.normalize()
 
             # Shadow
-            shadow_origin = Vector3(P.x + N.x * epsilon, P.y + N.y * epsilon, P.z + N.z * epsilon)
+            shadow_origin = Vector3(P).add(Vector3(N).mul(epsilon))
             shadow_sphere, _ = GetClosestIntersection(shadow_origin, L, epsilon, t_max)
             if shadow_sphere :
                 continue
@@ -127,10 +119,7 @@ def ComputeLighting(P, N, V, s):
             # Specular
             if s != -1:
                 R = ReflectRay(L, N)
-                R_len = R.length()
-                R.x /= R_len
-                R.y /= R_len
-                R.z /= R_len
+                R.normalize()
                 r_dot_v = R.dot(V)
                 if r_dot_v > 0:
                     i += light.intensity * pow(r_dot_v, s)

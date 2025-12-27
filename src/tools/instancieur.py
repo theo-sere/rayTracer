@@ -3,16 +3,54 @@ import os
 import math
     
 class Vector3:
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
+    """
+    Wrap Vector inside "Vector3" to copy it and avoid modifying it in-place.
+    """
+    def __init__(self, x = 0.0, y = 0.0, z = 0.0):
+        if isinstance(x, Vector3):
+            self.x = x.x
+            self.y = x.y
+            self.z = x.z
+        else:
+            self.x = float(x)
+            self.y = float(y)
+            self.z = float(z) 
 
     def dot(self, b):
         return ((self.x * b.x) + (self.y * b.y) + (self.z * b.z))
     
     def length(self):
         return math.sqrt(self.dot(self))
+    
+    def add(self, n):
+        if isinstance(n, Vector3):
+            self.x += n.x
+            self.y += n.y
+            self.z += n.z
+        else:
+            self.x += n
+            self.y += n
+            self.z += n
+        return self
+    
+    def sub(self, n):
+        if isinstance(n, Vector3):
+            self.add(Vector3(n).mul(-1))
+        else:
+            self.add(-n)
+        return self
+
+    def mul(self, n):
+        self.x *= n
+        self.y *= n
+        self.z *= n
+        return self
+    
+    def div(self, n):
+        return self.mul(1/n)
+    
+    def normalize(self):
+        return self.div(self.length())
 
 class Color:
     def __init__(self, r, g, b):
@@ -66,6 +104,11 @@ class Sphere:
         self.reflective = sphere["reflective"]
         self.specular = sphere["specular"]
 
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
+
 class Light:
     def __init__(self, number):
         light = JsonReader.get('lights.l'+str(number))
@@ -79,3 +122,8 @@ class Light:
             self.y = light["position"]["y"]
             self.z = light["position"]["z"]
         self.intensity = light["intensity"]
+
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
