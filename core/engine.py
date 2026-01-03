@@ -10,7 +10,6 @@ from geometry.color import Color
 class Renderer:
     def __init__(self, vp_size):
         self.array = []
-        # TODO: Clean-up Renderer class
         width, height = vp_size
         camPos = Scene.camera
         spheres = Scene.spheres

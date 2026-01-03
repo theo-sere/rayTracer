@@ -6,5 +6,3 @@ scene_data = SceneLoader("scene.json").data
 scene = Scene.set(scene_data)
 
 renderer = Renderer([500, 500])
-
-# renderer.save_ppm("output/image.ppm")
