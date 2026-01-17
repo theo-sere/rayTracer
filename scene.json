@@ -7,9 +7,10 @@
     "width": 500,
     "height": 500
   },
-  "camera_position": { "x": 0, "y": 0, "z": 0 },
+  "camera_position": { "x": -2, "y": 0, "z": 0 },
+  "camera_final_position": { "x": 2, "y": 1, "z": 0 },
   "projection_plane_d": 1,
-  "background_color": { "r": 0, "g": 0, "b": 0 },
+  "background_color": { "r": 0, "g": 255, "b": 255 },
   "spheres": {
     "s1": {
       "center": { "x": 0, "y": -1, "z": 3 },
@@ -23,14 +24,14 @@
       "radius": 1,
       "color": { "r": 0, "g": 255, "b": 0 },
       "specular": 10,
-      "reflective": 0.4
+      "reflective": 0.3
     },
     "s3": {
       "center": { "x": 2, "y": 0, "z": 4 },
       "radius": 1,
       "color": { "r": 0, "g": 0, "b": 255 },
       "specular": 500,
-      "reflective": 0.3
+      "reflective": 0.4
     },
     "s4": {
       "center": { "x": 0, "y": -5001, "z": 0 },
