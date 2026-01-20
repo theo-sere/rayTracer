@@ -8,7 +8,7 @@ from geometry.vector import Vector2, Vector3, Size2
 from geometry.color import Color
 
 class Renderer:
-    def __init__(self, vp_size):
+    def __init__(self, vp_size, img_path):
         self.array = []
         width, height = vp_size
         camPos = Scene.camera
@@ -17,7 +17,7 @@ class Renderer:
         viewport_size = Scene.viewport_size
         projection_plane_d = Scene.projection_plane_d
         self.epsilon = 0.001
-        with open("image.ppm", "w") as f:
+        with open(img_path, "w") as f:
             f.write("P3\n")
             f.write(f"{int(width)} {int(height)}\n")
             f.write("255\n")
