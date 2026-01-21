@@ -12,7 +12,7 @@ class Renderer:
         self.array = []
         width, height = vp_size
         camPos = Scene.camera
-        spheres = Scene.spheres
+        scene_obj = Scene.objects
         lights = Scene.lights
         viewport_size = Scene.viewport_size
         projection_plane_d = Scene.projection_plane_d
@@ -27,7 +27,7 @@ class Renderer:
                         x = _x - width / 2
                         y = _y - height / 2
                         dir = CanvasToViewport(Vector2(x, -y), viewport_size, Size2(**{"width": width, "height" : height}), projection_plane_d)
-                        color = self.TraceRay(Vector3(camPos), Vector3(dir), 1, float("inf"), 3, spheres, lights).round().clamp()
+                        color = self.TraceRay(Vector3(camPos), Vector3(dir), 1, float("inf"), 3, scene_obj, lights).round().clamp()
                         
                         self.array[_y].append(color)
                         f.write(f"{color.r} {color.g} {color.b} ")
@@ -40,37 +40,37 @@ class Renderer:
     def GetClosestIntersection(self, O, D, t_min, t_max):
         closest_t = float('inf')
         closest_obj = None
-        for s in Scene.spheres:
-            t1, t2 = self.IntersectRaySphere(O, D, s)
+        for o in Scene.objects:
+            t1, t2 = o.Intersect(O, D)
             if t_min < t1 < t_max and t1 < closest_t:
                 closest_t = t1
-                closest_obj = s
+                closest_obj = o
             if t_min < t2 < t_max and t2 < closest_t:
                 closest_t = t2
-                closest_obj = s
+                closest_obj = o
         return closest_obj, closest_t
 
-    def TraceRay(self, O, D, t_min, t_max, recursion_depth, spheres_objects, lights_objects):
+    def TraceRay(self, O, D, t_min, t_max, recursion_depth, scene_obj, lights_objects):
 
-        closest_sphere, closest_t = self.GetClosestIntersection(O, D, t_min, t_max)
+        closest_obj, closest_t = self.GetClosestIntersection(O, D, t_min, t_max)
 
-        if not closest_sphere:
+        if not closest_obj:
             bg = Scene.bg_color
             return Color(bg.r, bg.g, bg.b)
         
-        x, y, z = closest_sphere
-        closest_sphere_vec = Vector3(x, y, z)
+        x, y, z = closest_obj
+        closest_obj_vec = Vector3(x, y, z)
         
         P = Vector3(O).add(Vector3(D).mul(closest_t))
 
-        N = Vector3(P).sub(closest_sphere_vec).normalize()
+        N = closest_obj.ComputeNormal(P)
 
         V = Vector3(D).mul(-1).normalize()
 
-        lighting_intensity = self.ComputeLighting(P, N, V, getattr(closest_sphere, 'specular', -1))
-        _color = closest_sphere.color.mul(lighting_intensity).clamp().round()
+        lighting_intensity = self.ComputeLighting(P, N, V, getattr(closest_obj, 'specular', -1))
+        _color = closest_obj.color.mul(lighting_intensity).clamp().round()
 
-        ref = closest_sphere.reflective
+        ref = closest_obj.reflective
 
         if recursion_depth <= 0 or ref <= 0 :
             return _color
@@ -79,24 +79,9 @@ class Renderer:
         
         reflection_origin = Vector3(P).add(Vector3(N).mul(self.epsilon))
 
-        reflected_color = self.TraceRay(reflection_origin, R, self.epsilon, float("infinity"), recursion_depth - 1, spheres_objects, lights_objects)
+        reflected_color = self.TraceRay(reflection_origin, R, self.epsilon, float("infinity"), recursion_depth - 1, scene_obj, lights_objects)
 
         return _color.mul(1 - ref).add(reflected_color.mul(ref))
-
-    def IntersectRaySphere(self, O, D, sphere):
-        r = sphere.radius
-        x, y, z = sphere
-        sphere_pos = Vector3(x, y, z)
-        CO = Vector3(O).sub(sphere_pos)
-        a = D.dot(D)
-        b = 2 * CO.dot(D)
-        c = CO.dot(CO) - r*r
-        discriminant = b*b - 4*a*c
-        if discriminant < 0:
-            return float('inf'), float('inf')
-        t1 = (-b + sqrt(discriminant)) / (2*a)
-        t2 = (-b - sqrt(discriminant)) / (2*a)
-        return t1, t2
 
     def ComputeLighting(self, P, N, V, s):
         i = 0.0
@@ -119,8 +104,8 @@ class Renderer:
 
                 # Shadow
                 shadow_origin = Vector3(P).add(Vector3(N).mul(self.epsilon))
-                shadow_sphere, _ = self.GetClosestIntersection(shadow_origin, L, self.epsilon, t_max)
-                if shadow_sphere :
+                shadow_obj, _ = self.GetClosestIntersection(shadow_origin, L, self.epsilon, t_max)
+                if shadow_obj :
                     continue
 
                 # Diffuse

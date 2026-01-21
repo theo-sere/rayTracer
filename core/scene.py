@@ -15,6 +15,7 @@ class Scene:
         self.pixel_size = None
         self.projection_plane_d = None
         self.final_cam = None
+        self.objects = []
     def set(self, scene_data):
         self.boxes.extend([Box(**b) for b in scene_data["boxes"]])
         self.spheres.extend([Sphere(**s) for s in scene_data["spheres"]])
@@ -25,4 +26,5 @@ class Scene:
         self.viewport_size = Size2(**scene_data["viewport_size"])
         self.pixel_size = Size2(**scene_data["pixel_size"])
         self.projection_plane_d = scene_data["projection_plane_d"]
+        self.objects.extend(self.spheres + self.boxes)
 instance = Scene()
