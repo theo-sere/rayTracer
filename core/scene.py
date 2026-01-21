@@ -1,4 +1,5 @@
 from geometry.sphere import Sphere
+from geometry.box import Box
 from geometry.light import Light
 from geometry.vector import Vector3, Size2
 from geometry.color import Color
@@ -6,6 +7,7 @@ from geometry.color import Color
 class Scene:
     def __init__(self):
         self.spheres = []
+        self.boxes = []
         self.lights = []
         self.camera = None
         self.bg_color = None
@@ -13,7 +15,9 @@ class Scene:
         self.pixel_size = None
         self.projection_plane_d = None
         self.final_cam = None
+        self.objects = []
     def set(self, scene_data):
+        self.boxes.extend([Box(**b) for b in scene_data["boxes"]])
         self.spheres.extend([Sphere(**s) for s in scene_data["spheres"]])
         self.lights.extend([Light(**l) for l in scene_data["lights"]])
         self.camera = Vector3(**scene_data["camera_position"])
@@ -22,4 +26,5 @@ class Scene:
         self.viewport_size = Size2(**scene_data["viewport_size"])
         self.pixel_size = Size2(**scene_data["pixel_size"])
         self.projection_plane_d = scene_data["projection_plane_d"]
+        self.objects.extend(self.spheres + self.boxes)
 instance = Scene()
