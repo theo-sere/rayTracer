@@ -1,9 +1,9 @@
 import math
 
 class Size2:
-    def __init__(self, width = 0.0, height = 0.0):
-            self.width = float(width)
-            self.height = float(height)
+    def __init__(self, width = 0.0, height = 0.0, isfloat = True):
+            self.width = float(width) if isfloat else int(width)
+            self.height = float(height) if isfloat else int(height)
 
 class Vector2:
     """

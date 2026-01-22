@@ -20,8 +20,8 @@ def multiCapture():
     ty = (Scene.final_cam.y - Scene.camera.y) / (nCaptures - 1)
     tz = (Scene.final_cam.z - Scene.camera.z) / (nCaptures - 1)
     for i in range(nCaptures):
-        print("Generation of the image number", i + 1)
-        renderer = Renderer([500, 500], f"image{i}.ppm")
+        print("Generation of the image number", i+1)
+        renderer = Renderer([Scene.pixel_size.width, Scene.pixel_size.height], f"image{i}.ppm")
         frames.append(imageio.v3.imread(f"image{i}.ppm"))
         Scene.camera.x += tx
         Scene.camera.y += ty

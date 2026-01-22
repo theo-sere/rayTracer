@@ -8,6 +8,7 @@ class Scene:
     def __init__(self):
         self.spheres = []
         self.boxes = []
+        self.pixel_size = []
         self.lights = []
         self.camera = None
         self.bg_color = None
@@ -17,6 +18,7 @@ class Scene:
         self.final_cam = None
         self.objects = []
     def set(self, scene_data):
+        self.pixel_size = []
         self.boxes.extend([Box(**b) for b in scene_data["boxes"]])
         self.spheres.extend([Sphere(**s) for s in scene_data["spheres"]])
         self.lights.extend([Light(**l) for l in scene_data["lights"]])
@@ -24,7 +26,7 @@ class Scene:
         self.final_cam = Vector3(**scene_data["camera_final_position"])
         self.bg_color = Color(**scene_data["bg_color"])
         self.viewport_size = Size2(**scene_data["viewport_size"])
-        self.pixel_size = Size2(**scene_data["pixel_size"])
+        self.pixel_size = Size2(**scene_data["pixel_size"], isfloat = False)
         self.projection_plane_d = scene_data["projection_plane_d"]
         self.objects.extend(self.spheres + self.boxes)
 instance = Scene()
