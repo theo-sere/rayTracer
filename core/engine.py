@@ -8,14 +8,12 @@ from geometry.vector import Vector2, Vector3, Size2
 from geometry.color import Color
 
 class Renderer:
-    def __init__(self, vp_size, img_path):
+    def __init__(self, pxl_size, img_path):
         self.array = []
-        width, height = vp_size
-        camPos = Scene.camera
+        width, height = pxl_size
         scene_obj = Scene.objects
         lights = Scene.lights
-        viewport_size = Scene.viewport_size
-        projection_plane_d = Scene.projection_plane_d
+        camera = Scene.camera
         self.epsilon = 0.001
         with open(img_path, "w") as f:
             f.write("P3\n")
@@ -26,8 +24,8 @@ class Renderer:
                 for _x in range(width):
                         x = _x - width / 2
                         y = _y - height / 2
-                        dir = CanvasToViewport(Vector2(x, -y), viewport_size, Size2(**{"width": width, "height" : height}), projection_plane_d)
-                        color = self.TraceRay(Vector3(camPos), Vector3(dir), 1, float("inf"), 3, scene_obj, lights).round().clamp()
+                        dir = CanvasToViewport(Vector2(x, -y), Size2(**{"width": width, "height" : height}), camera.projection_plane_d, camera.fov)
+                        color = self.TraceRay(Vector3(camera.position), Vector3(dir), 1, float("inf"), 3, scene_obj, lights).round().clamp()
                         
                         self.array[_y].append(color)
                         f.write(f"{color.r} {color.g} {color.b} ")

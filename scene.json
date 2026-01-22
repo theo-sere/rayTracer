@@ -1,15 +1,14 @@
 {
-  "viewport_size": {
-    "width": 1,
-    "height": 1
-  },
   "pixel_size": {
-    "width": 500,
-    "height": 500
+    "width": 540,
+    "height": 420
   },
-  "camera_position": { "x": 0, "y": 0.5, "z": -1 },
-  "camera_final_position": { "x": 0, "y": 0, "z": 0 },
-  "projection_plane_d": 1,
+  "camera": {
+    "position": { "x": 0, "y": 0.5, "z": -1 },
+    "fov": {"x" : 40, "y" :  50},
+    "final_position": { "x": 0, "y": 0, "z": 0 },
+    "projection_plane_d": 0.2
+  },
   "bg_color": { "r": 20, "g": 20, "b": 30 },
   "spheres": [
     {
