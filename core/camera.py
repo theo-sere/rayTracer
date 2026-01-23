@@ -7,18 +7,18 @@ def CanvasToViewport(coords, C, projection_plane_d, fov):
     return Vector3(coords.x * vp_width / C.width, coords.y * vp_height / C.height, projection_plane_d)
  
 class Camera:
-    def __init__(self, position=None, final_position = None, fov=None, projection_plane_d = 1):
+    def __init__(self, position = None, final_position = None, fov = None, projection_plane_d = 1):
         if position is None:
-            position = {"x": 0, "y": 0, "z": 0}
+            self.position = {"x": 0, "y": 0, "z": 0}
+        else :
+            self.position = Vector3(**position)
         if fov is None:
             fov = {"x": 80, "y": 50}
-
-        self.position = Vector3(**position)
-
-        if not final_position or not type(final_position) is Vector3 :
+        if final_position is None:
             self.final_position = self.position
         else:
-            self.final_position = final_position
+            self.final_position = Vector3(**final_position)
+
         self.projection_plane_d = projection_plane_d
 
         self.fov = Vector3(**fov)
