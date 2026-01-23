@@ -16,16 +16,16 @@ def multiCapture():
     print("How long (in seconds) ?")
     duree = int(input())
     frames = []
-    tx = (Scene.final_cam.x - Scene.camera.x) / (nCaptures - 1)
-    ty = (Scene.final_cam.y - Scene.camera.y) / (nCaptures - 1)
-    tz = (Scene.final_cam.z - Scene.camera.z) / (nCaptures - 1)
+    tx = (Scene.camera.final_position.x - Scene.camera.position.x) / (nCaptures-1)
+    ty = (Scene.camera.final_position.y - Scene.camera.position.y) / (nCaptures-1)
+    tz = (Scene.camera.final_position.z - Scene.camera.position.z) / (nCaptures-1)
     for i in range(nCaptures):
         print("Generation of the image number", i+1)
         renderer = Renderer([Scene.pixel_size.width, Scene.pixel_size.height], f"image{i}.ppm")
         frames.append(imageio.v3.imread(f"image{i}.ppm"))
-        Scene.camera.x += tx
-        Scene.camera.y += ty
-        Scene.camera.z += tz
+        Scene.camera.position.x += tx
+        Scene.camera.position.y += ty
+        Scene.camera.position.z += tz
     return nCaptures, duree, frames
 
 if answer == "1":
@@ -38,5 +38,3 @@ elif answer == "2":
 elif answer == "3":
     nCaptures, duree, frames = multiCapture()
     imageio.mimsave('animation.mp4', frames, fps=nCaptures/duree)
-    for i in range(nCaptures):
-        os.remove(f"image{i}.ppm")
