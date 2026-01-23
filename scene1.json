@@ -1,0 +1,55 @@
+{
+  "pixel_size": { "width": 800, "height": 600 },
+  "camera": {
+    "position": { "x": 0, "y": 0.8, "z": -2 },
+    "fov": { "x": 90, "y": 67.5 },
+    "projection_plane_d": 0.1,
+    "aperture": 0.15,
+    "focal_distance": 3.5,
+    "samples": 16
+  },
+  "bg_color": { "r": 5, "g": 5, "b": 10 },
+  "spheres": [
+    {
+      "center": { "x": 0, "y": 0, "z": 3.5 },
+      "radius": 1.0,
+      "color": { "r": 255, "g": 215, "b": 0 },
+      "specular": 1500,
+      "reflective": 0.4
+    },
+    {
+      "center": { "x": 2.5, "y": 0.5, "z": 7.0 },
+      "radius": 1.2,
+      "color": { "r": 255, "g": 0, "b": 255 },
+      "specular": 500,
+      "reflective": 0.2
+    }
+  ],
+  "boxes": [
+    {
+      "center": { "x": -1.8, "y": -0.5, "z": 1.5 },
+      "width": 0.6, "depth": 0.6, "height": 3.0,
+      "color": { "r": 0, "g": 255, "b": 255 },
+      "specular": 1000, "reflective": 0.3
+    },
+    {
+      "center": { "x": 0, "y": -1.2, "z": 5 },
+      "width": 20, "depth": 20, "height": 0.1,
+      "color": { "r": 20, "g": 20, "b": 30 },
+      "specular": 100, "reflective": 0.6
+    }
+  ],
+  "lights": [
+    { "type": "ambient", "intensity": 0.05 },
+    {
+      "type": "point",
+      "intensity": 0.9,
+      "position": { "x": -5, "y": 5, "z": 0 }
+    },
+    {
+      "type": "point",
+      "intensity": 0.6,
+      "position": { "x": 3, "y": 2, "z": 8 }
+    }
+  ]
+}
