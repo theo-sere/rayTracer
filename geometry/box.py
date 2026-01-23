@@ -1,6 +1,5 @@
 from geometry.vector import Vector3
 from geometry.color import Color
-from math import sqrt
 
 class Box:
     def __init__(self, center, width, height, depth, color, reflective, specular):

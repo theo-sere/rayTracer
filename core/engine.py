@@ -81,10 +81,7 @@ class Renderer:
         if not closest_obj:
             bg = Scene.bg_color
             return Color(bg.r, bg.g, bg.b)
-        
-        x, y, z = closest_obj
-        closest_obj_vec = Vector3(x, y, z)
-        
+                
         P = Vector3(O).add(Vector3(D).mul(closest_t))
 
         N = closest_obj.ComputeNormal(P)

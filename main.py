@@ -4,7 +4,7 @@ from core.scene import instance as Scene
 import imageio
 import os
 
-scene_data = SceneLoader("scene1.json").data
+scene_data = SceneLoader("scene.json").data
 Scene.set(scene_data)
 
 print("Image (1) - GIF (2) - Video (3)")
@@ -21,7 +21,7 @@ def multiCapture():
     tz = (Scene.camera.final_position.z - Scene.camera.position.z) / (nCaptures-1)
     for i in range(nCaptures):
         print("Generation of the image number", i+1)
-        renderer = Renderer([Scene.pixel_size.width, Scene.pixel_size.height], f"image{i}.ppm")
+        Renderer([Scene.pixel_size.width, Scene.pixel_size.height], f"image{i}.ppm")
         frames.append(imageio.v3.imread(f"image{i}.ppm"))
         Scene.camera.position.x += tx
         Scene.camera.position.y += ty
@@ -29,7 +29,7 @@ def multiCapture():
     return nCaptures, duree, frames
 
 if answer == "1":
-    renderer = Renderer([Scene.pixel_size.width, Scene.pixel_size.height], "image.ppm")
+    Renderer([Scene.pixel_size.width, Scene.pixel_size.height], "image.ppm")
 elif answer == "2":
     nCaptures, duree, frames = multiCapture()
     imageio.mimsave('animation.gif', frames, fps=nCaptures / duree)
