@@ -7,7 +7,10 @@ def CanvasToViewport(coords, C, projection_plane_d, fov):
     return Vector3(coords.x * vp_width / C.width, coords.y * vp_height / C.height, projection_plane_d)
  
 class Camera:
-    def __init__(self, position = None, final_position = None, fov = None, projection_plane_d = 1):
+    def __init__(self, position = None, final_position = None, fov = None, projection_plane_d = 1, aperture = 0.0, focal_distance = 3, samples = 16):
+        self.aperture = aperture
+        self.focal_distance = focal_distance
+        self.samples = samples
         if position is None:
             self.position = {"x": 0, "y": 0, "z": 0}
         else :

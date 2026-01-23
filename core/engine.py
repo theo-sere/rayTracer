@@ -1,5 +1,6 @@
-from math import sqrt
-from types import SimpleNamespace
+from math import sqrt, pi, sin, cos
+
+import random
 
 from core.camera import CanvasToViewport
 from core.scene import instance as Scene
@@ -20,15 +21,40 @@ class Renderer:
             f.write(f"{int(width)} {int(height)}\n")
             f.write("255\n")
             for _y in range(height):
-                self.array.append([]) 
+                self.array.append([])
                 for _x in range(width):
+                    total_color = Color(0, 0, 0)
+
+                    for _ in range(camera.samples):
                         x = _x - width / 2
                         y = _y - height / 2
-                        dir = CanvasToViewport(Vector2(x, -y), Size2(**{"width": width, "height" : height}), camera.projection_plane_d, camera.fov)
-                        color = self.TraceRay(Vector3(camera.position), Vector3(dir), 1, float("inf"), 3, scene_obj, lights).round().clamp()
-                        
-                        self.array[_y].append(color)
-                        f.write(f"{color.r} {color.g} {color.b} ")
+
+                        dir_vec = CanvasToViewport(
+                            Vector2(x, -y),
+                            Size2(**{"width": width, "height": height}),
+                            camera.projection_plane_d,
+                            camera.fov
+                        )
+                        dir_vec = Vector3(dir_vec).normalize()
+
+                        f_point = Vector3(camera.position).add(dir_vec.mul(camera.focal_distance))
+
+                        angle = 2 * pi * random.random()
+                        r = camera.aperture * sqrt(random.random())
+                        offset = Vector3(r * cos(angle), r * sin(angle), 0)
+
+                        new_origin = Vector3(camera.position).add(offset)
+
+                        new_dir = f_point.sub(new_origin).normalize()
+
+                        sample_color = self.TraceRay(
+                            new_origin, new_dir, 1, float("inf"), 3, scene_obj, lights
+                        )
+                        total_color = total_color.add(sample_color)
+
+                    avg_color = total_color.mul(1.0 / camera.samples).round().clamp()
+                    self.array[_y].append(avg_color)
+                    f.write(f"{avg_color.r} {avg_color.g} {avg_color.b} ")
                 f.write("\n")
 
     def ReflectRay(self, R, N) :
