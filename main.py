@@ -4,7 +4,7 @@ from core.scene import instance as Scene
 import imageio
 import os
 
-scene_data = SceneLoader("scene.json").data
+scene_data = SceneLoader("scene1.json").data
 Scene.set(scene_data)
 
 print("Image (1) - GIF (2) - Video (3)")
@@ -29,7 +29,7 @@ def multiCapture():
     return nCaptures, duree, frames
 
 if answer == "1":
-    renderer = Renderer([500, 500], "image.ppm")
+    renderer = Renderer([Scene.pixel_size.width, Scene.pixel_size.height], "image.ppm")
 elif answer == "2":
     nCaptures, duree, frames = multiCapture()
     imageio.mimsave('animation.gif', frames, fps=nCaptures / duree)
